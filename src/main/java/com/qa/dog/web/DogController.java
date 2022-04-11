@@ -3,6 +3,8 @@ package com.qa.dog.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,15 +21,16 @@ public class DogController {
 	private List<Dog> dogs = new ArrayList<>();
 
 	@PostMapping("/create")
-	public Dog createDog(@RequestBody Dog d) {
+	public ResponseEntity<Dog> createDog(@RequestBody Dog d) {
 		this.dogs.add(d);
 		Dog created = this.dogs.get(this.dogs.size() - 1);
-		return created;
+		ResponseEntity<Dog> response = new ResponseEntity<Dog>(created, HttpStatus.CREATED);
+		return response;
 	}
 
 	@GetMapping("/getAll")
-	public List<Dog> getAllDogs() {
-		return this.dogs;
+	public ResponseEntity<List<Dog>> getAllDogs() {
+		return ResponseEntity.ok(this.dogs);
 	}
 
 	@GetMapping("/get/{id}")
@@ -36,13 +39,15 @@ public class DogController {
 	}
 
 	@PutMapping("/replace/{id}")
-	public Dog replaceDog(@PathVariable Integer id, @RequestBody Dog newDog) {
+	public ResponseEntity<Dog> replaceDog(@PathVariable Integer id, @RequestBody Dog newDog) {
 		Dog body = this.dogs.set(id, newDog);
-		return body;
+		ResponseEntity<Dog> response = new ResponseEntity<Dog>(body, HttpStatus.ACCEPTED);
+		return response;
 	}
 
 	@DeleteMapping("/remove/{id}")
-	public void removeDog(@PathVariable Integer id) {
+	public ResponseEntity<?> removeDog(@PathVariable Integer id) {
 		this.dogs.remove(id.intValue());
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
